@@ -55,6 +55,8 @@ table.rows .amt{text-align:right}
 .btn.ghost{background:#fff;color:var(--mut);border:1.4px solid var(--line)}
 #msg{font-size:13.5px;color:var(--ac);margin-top:9px;min-height:19px}
 .note{font-size:12px;color:var(--mut);line-height:1.6;margin-top:6px}
+.guide{background:#eef4fb;border:1.6px solid var(--ac2);border-radius:11px;padding:10px 12px;font-size:13px;margin-top:12px;line-height:1.7}
+.guide ol{margin:4px 0 0;padding-left:20px}
 #picker{position:fixed;inset:0;background:rgba(15,30,50,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
 #picker.open{display:flex}
 .pk{background:#fff;width:100%;max-width:560px;max-height:82vh;border-radius:16px 16px 0 0;display:flex;flex-direction:column;padding:14px}
@@ -88,8 +90,10 @@ table.rows .amt{text-align:right}
    <button class="btn ghost" id="clr">クリア</button>
   </div>
   <div id="msg"></div>
-  <p class="note">所属・担当者は端末に記憶されます。印鑑は、読み込んだデータの印鑑を使います（不要なときは「基本」でオフ。2つ目の印鑑の位置は所長／営業責任者を選べます）。明細の取引先は「選ぶ」から得意先リストを検索できます（初回だけ、下のボタンからリストの読み込みが必要です）。</p>
-  <div class="imp"><button class="btn sub" id="impBtn" type="button">📋 得意先リスト読み込み</button><input type="file" id="impFile" accept=".json,application/json" style="display:none"><span class="imp-info" id="impInfo"></span></div>
+  <p class="note">所属・担当者は端末に記憶されます。印鑑は、読み込んだデータか「印鑑を登録」で登録した画像を使います（不要なときは「基本」でオフ。2つ目の印鑑の位置は所長／営業責任者を選べます）。明細の取引先は「選ぶ」から得意先リストを検索できます（初回だけ、下のボタンからリストの読み込みが必要です。Excelでも読み込めます）。</p>
+  <div class="imp"><button class="btn sub" id="impBtn" type="button">📋 得意先リスト読み込み</button><input type="file" id="impFile" accept=".json,.xlsx,.xls,application/json" style="display:none"><span class="imp-info" id="impInfo"></span></div>
+  <div class="imp"><button class="btn sub" id="dlBtn" type="button">📄 空のExcelをダウンロード</button><button class="btn sub" id="sealBtn" type="button">🖊 印鑑を登録</button><input type="file" id="sealFile" accept="image/*" style="display:none"><span class="imp-info" id="sealInfo"></span></div>
+  <div class="guide" id="setupGuide" style="display:none"><b>はじめての方へ（最初の登録）</b><ol><li>下の「基本」で、所属と担当者を入力する</li><li>「🖊 印鑑を登録」から、印鑑の画像（写真でも可）を選ぶ</li><li>得意先リストを読み込む（「📄 空のExcelをダウンロード」で書式を取って入力するか、JSONファイル）</li></ol></div>
  </section>
  <section class="fm" id="form"></section>
 </main>
@@ -100,6 +104,7 @@ table.rows .amt{text-align:right}
  <button class="x" id="pkx">閉じる</button>
 </div></div>
 <script src="./pdf-lib.min.js"></script>
+<script src="./xlsx.full.min.js"></script>
 <script>
 "use strict";
 const $=s=>document.querySelector(s),el=(t,a)=>{const e=document.createElement(t);if(a)for(const k in a)e[k]=a[k];return e};
@@ -124,7 +129,7 @@ function defV(){
  Object.assign(V,F);
 }
 defV();
-function saveSettings(){localStorage.setItem('kyosan_settings',JSON.stringify({shozoku:V.shozoku,tanto:V.tanto,stamp:V.stamp,stampPos:V.stampPos}))}
+function saveSettings(){localStorage.setItem('kyosan_settings',JSON.stringify({shozoku:V.shozoku,tanto:V.tanto,stamp:V.stamp,stampPos:V.stampPos}));updSetup()}
 const dig=s=>String(s==null?'':s).replace(/[^0-9]/g,'');
 const money=s=>{const d=dig(s);return d?Number(d).toLocaleString('ja-JP'):''};
 /* ===== 座標定義（単位pt・原点は左上） ===== */
@@ -370,24 +375,89 @@ $('#clr').onclick=()=>{if(!confirm('入力内容をクリアしますか？（�
 /* ===== 得意先リスト・印鑑の読み込み（端末内だけに保存） ===== */
 function impInfo(){const s=$('#impInfo');if(s)s.textContent=CLIENTS.length?('得意先リスト：'+CLIENTS.length+'件 読み込み済み'):'得意先リスト：未読み込み（初回は読み込んでください）'}
 $('#impBtn').onclick=()=>$('#impFile').click();
-$('#impFile').addEventListener('change',ev=>{
- const f=ev.target.files[0];if(!f)return;
+function applyClients(list,d){
+ CLIENTS=list;localStorage.setItem('kyosan_clients',JSON.stringify(list));
+ impInfo();draw();updSetup();
+ if(d&&d.settings){localStorage.setItem('kyosan_settings',JSON.stringify(d.settings));
+  $('#msg').textContent='読み込みました（'+list.length+'件）。所属・担当者・印鑑を登録して、再読み込みします';
+  setTimeout(()=>location.reload(),900);
+ }else $('#msg').textContent='得意先リストを読み込みました（'+list.length+'件）';
+}
+function importJSON(f){
  const r=new FileReader();
  r.onload=()=>{try{
   const d=JSON.parse(r.result);
   const list=Array.isArray(d)?d:d.clients;
   if(!Array.isArray(list)||!list.length)throw new Error('リストが入っていません');
-  CLIENTS=list;localStorage.setItem('kyosan_clients',JSON.stringify(list));
-  if(d.hanko){localStorage.setItem('kyosan_hanko',d.hanko);hanko.src=d.hanko}
-  impInfo();draw();
-  if(d.settings){localStorage.setItem('kyosan_settings',JSON.stringify(d.settings));
-   $('#msg').textContent='読み込みました（'+list.length+'件）。所属・担当者・印鑑を登録して、再読み込みします';
-   setTimeout(()=>location.reload(),900);
-  }else $('#msg').textContent='得意先リストを読み込みました（'+list.length+'件）';
+  if(d.hanko){localStorage.setItem('kyosan_hanko',d.hanko);hanko.src=d.hanko;sealInfo()}
+  applyClients(list,d);
  }catch(e){$('#msg').textContent='読み込めませんでした：'+(e.message||e)}};
- r.readAsText(f);ev.target.value='';
+ r.readAsText(f);
+}
+function importXlsx(f){
+ const r=new FileReader();
+ r.onload=()=>{try{
+  if(typeof XLSX==='undefined')throw new Error('Excel読み込みの準備ができていません。通信の良いところで開き直してください');
+  const wb=XLSX.read(new Uint8Array(r.result),{type:'array'});
+  const ws=wb.Sheets['得意先リスト']||wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:''});
+  const head=(rows[0]||[]).map(x=>String(x).trim());
+  const ix={};['コード','取引先名1','取引先名2','郵便番号','住所','電話番号','FAX'].forEach(h=>{ix[h]=head.indexOf(h)});
+  if(ix['コード']<0||ix['取引先名1']<0)throw new Error('見出し（コード・取引先名1など）が見つかりません。「空のExcel」の書式を使ってください');
+  const list=[];
+  rows.slice(1).forEach(rw=>{const g=h=>ix[h]<0?'':String(rw[ix[h]]==null?'':rw[ix[h]]).trim();
+   const c={code:g('コード'),n1:g('取引先名1'),n2:g('取引先名2'),zip:g('郵便番号'),addr:g('住所'),tel:g('電話番号'),fax:g('FAX')};
+   if(c.code||c.n1)list.push(c)});
+  if(!list.length)throw new Error('データが入っていません');
+  applyClients(list,null);
+ }catch(e){$('#msg').textContent='読み込めませんでした：'+(e.message||e)}};
+ r.readAsArrayBuffer(f);
+}
+$('#impFile').addEventListener('change',ev=>{
+ const f=ev.target.files[0];if(!f)return;
+ if(/\.xlsx?$/i.test(f.name))importXlsx(f);else importJSON(f);
+ ev.target.value='';
 });
-impInfo();
+$('#dlBtn').onclick=()=>{
+ try{
+  if(typeof XLSX==='undefined')throw new Error('準備ができていません。開き直してください');
+  const ws=XLSX.utils.aoa_to_sheet([['コード','取引先名1','取引先名2','郵便番号','住所','電話番号','FAX']]);
+  ws['!cols']=[{wch:10},{wch:28},{wch:28},{wch:12},{wch:46},{wch:16},{wch:16}];
+  const hw=XLSX.utils.aoa_to_sheet([['使い方'],[''],['・「得意先リスト」シートの1行目の見出しは変えないでください。2行目から1件ずつ入力します。'],['・コードは数字4桁（例：1671）。取引先名2は、店舗名が2段に分かれる場合の2段目です（なければ空欄）。'],['・郵便番号は「739-0001」のようにハイフン入りでも、数字だけでも大丈夫です。'],['・編集が終わったら、このファイルを協賛金申請書アプリの「📋 得意先リスト読み込み」で読み込んでください。'],['・このファイルには得意先の情報が入っています。取り扱いにご注意ください。']]);
+  hw['!cols']=[{wch:100}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'得意先リスト');
+  XLSX.utils.book_append_sheet(wb,hw,'使い方');
+  XLSX.writeFile(wb,'得意先リスト_空書式.xlsx');
+  $('#msg').textContent='空のExcelをダウンロードしました';
+ }catch(e){$('#msg').textContent='ダウンロードできませんでした：'+(e.message||e)}
+};
+function sealInfo(){const s2=$('#sealInfo');if(s2)s2.textContent='印鑑：'+(localStorage.getItem('kyosan_hanko')?'登録済み':'未登録')}
+$('#sealBtn').onclick=()=>$('#sealFile').click();
+$('#sealFile').addEventListener('change',ev=>{
+ const f=ev.target.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{const img=new Image();
+  img.onload=()=>{try{
+   const sc=Math.min(1,320/Math.max(img.width,img.height));
+   const c2=document.createElement('canvas');c2.width=Math.max(1,Math.round(img.width*sc));c2.height=Math.max(1,Math.round(img.height*sc));
+   const g=c2.getContext('2d');g.drawImage(img,0,0,c2.width,c2.height);
+   const idd=g.getImageData(0,0,c2.width,c2.height),px=idd.data;
+   for(let i=0;i<px.length;i+=4)px[i+3]=255-px[i+1];
+   g.putImageData(idd,0,0);
+   const url=c2.toDataURL('image/png');
+   localStorage.setItem('kyosan_hanko',url);hanko.onload=()=>draw();hanko.src=url;
+   sealInfo();updSetup();draw();
+   $('#msg').textContent='印鑑を登録しました';
+  }catch(e){$('#msg').textContent='印鑑を登録できませんでした：'+(e.message||e)}};
+  img.onerror=()=>{$('#msg').textContent='画像を読めませんでした'};
+  img.src=r.result};
+ r.readAsDataURL(f);ev.target.value='';
+});
+function updSetup(){const g=$('#setupGuide');if(!g)return;
+ const fresh=!CLIENTS.length&&!localStorage.getItem('kyosan_hanko')&&!String(V.tanto||'').trim();
+ g.style.display=fresh?'block':'none'}
+impInfo();sealInfo();updSetup();
 document.querySelector('.cv img.bg').onload=draw;
 draw();
 window.__t={get V(){return V},draw,set:(k,v)=>{V[k]=v;draw()}};
