@@ -37,6 +37,7 @@ main{max-width:1180px;margin:0 auto;padding:12px;display:block}
 .fr .unit{flex:0 0 auto;font-size:13px;color:var(--mut)}
 .fr3{display:flex;gap:6px;flex:1;min-width:0;align-items:center}
 .fr3 input{flex:1 1 0%;width:0;min-width:0;text-align:center}
+.fr .fr3 input{padding-left:3px;padding-right:3px;font-size:14px}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 2px}
 .chip{border:1.8px solid var(--ac2);color:var(--ac);background:#fff;border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;user-select:none}
 .chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
@@ -185,7 +186,7 @@ function row(parent,label,key,opts){
 function row3(parent,label,keys,units){
  const d=el('div',{className:'fr'});d.appendChild(el('label',{textContent:label}));
  const b=el('div',{className:'fr3'});
- keys.forEach((k,ix)=>{const i=el('input',{type:'text',value:V[k]||''});i.inputMode='numeric';
+ keys.forEach((k,ix)=>{const i=el('input',{type:'text',value:V[k]||''});i.inputMode='numeric';if(k.includes('Y'))i.style.flex='1.5 1 0%';
   i.oninput=()=>{V[k]=i.value;draw()};b.appendChild(i);
   b.appendChild(el('span',{className:'unit',textContent:units[ix]}))});
  d.appendChild(b);parent.appendChild(d)}
