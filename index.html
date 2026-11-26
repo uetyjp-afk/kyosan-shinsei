@@ -35,8 +35,8 @@ main{max-width:1180px;margin:0 auto;padding:12px;display:block}
 .fr input[type=text],.fr input[type=number],.fr textarea{flex:1;min-width:0;border:1.6px solid var(--line);border-radius:9px;padding:9px 10px;font-size:15px;background:#fff;color:var(--tx)}
 .fr textarea{resize:vertical}
 .fr .unit{flex:0 0 auto;font-size:13px;color:var(--mut)}
-.fr3{display:flex;gap:6px;flex:1;align-items:center}
-.fr3 input{flex:1;min-width:0;text-align:center}
+.fr3{display:flex;gap:6px;flex:1;min-width:0;align-items:center}
+.fr3 input{flex:1 1 0%;width:0;min-width:0;text-align:center}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 2px}
 .chip{border:1.8px solid var(--ac2);color:var(--ac);background:#fff;border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;user-select:none}
 .chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
@@ -87,7 +87,7 @@ table.rows .amt{text-align:right}
    <button class="btn ghost" id="clr">クリア</button>
   </div>
   <div id="msg"></div>
-  <p class="note">所属・担当者は端末に記憶されます。印鑑は元のExcel様式に入っていた上田印をそのまま使います（不要なときは「基本」でオフ）。明細の取引先は「選ぶ」から得意先リストを検索できます（初回だけ、下のボタンからリストの読み込みが必要です）。</p>
+  <p class="note">所属・担当者は端末に記憶されます。印鑑は、読み込んだデータの印鑑を使います（不要なときは「基本」でオフ。2つ目の印鑑の位置は所長／営業責任者を選べます）。明細の取引先は「選ぶ」から得意先リストを検索できます（初回だけ、下のボタンからリストの読み込みが必要です）。</p>
   <div class="imp"><button class="btn sub" id="impBtn" type="button">📋 得意先リスト読み込み</button><input type="file" id="impFile" accept=".json,application/json" style="display:none"><span class="imp-info" id="impInfo"></span></div>
  </section>
  <section class="fm" id="form"></section>
@@ -110,7 +110,7 @@ let V={};
 function defV(){
  const set=JSON.parse(localStorage.getItem('kyosan_settings')||'{}');
  const F={type:[],dY:String(td.getFullYear()),dM:String(td.getMonth()+1),dD:String(td.getDate()),
- shozoku:set.shozoku||'広島',tanto:set.tanto||'上田　多加志',stamp:set.stamp!==false,
+ shozoku:set.shozoku||'',tanto:set.tanto||'',stamp:set.stamp!==false,stampPos:set.stampPos||'shocho',
  rows:[0,1,2,3,4].map(()=>({code:'',name:'',naiyou:'',amt:''})),denpyo:'',total:'',
  tainou:'nashi',budget:'',ruikei:'',tenpu:[],hassou:'',shipM:'',shipD:'',okurijo:'',unsou:'',hatchu:'',
  shiharai:'',genAmt:'',sosaiM:'',sosaiAmt:'',furiKijitsu:'',furiAmt:'',
@@ -123,7 +123,7 @@ function defV(){
  Object.assign(V,F);
 }
 defV();
-function saveSettings(){localStorage.setItem('kyosan_settings',JSON.stringify({shozoku:V.shozoku,tanto:V.tanto,stamp:V.stamp}))}
+function saveSettings(){localStorage.setItem('kyosan_settings',JSON.stringify({shozoku:V.shozoku,tanto:V.tanto,stamp:V.stamp,stampPos:V.stampPos}))}
 const dig=s=>String(s==null?'':s).replace(/[^0-9]/g,'');
 const money=s=>{const d=dig(s);return d?Number(d).toLocaleString('ja-JP'):''};
 /* ===== 座標定義（単位pt・原点は左上） ===== */
@@ -200,8 +200,15 @@ chips(s,'type',[['hanbai','販売'],['itaku','委託'],['kyosan','協賛'],['cam
 s=sec('基本');
 row3(s,'日付',['dY','dM','dD'],['年','月','日']);
 row(s,'所属','shozoku');row(s,'担当者','tanto');
-chips(s,'stamp',[['on','印鑑を押す（担当者・所長）']],false).querySelector('.chip').onclick=function(){
+chips(s,'stamp',[['on','印鑑を押す（担当者＋決裁欄）']],false).querySelector('.chip').onclick=function(){
  V.stamp=!V.stamp;this.classList.toggle('on',V.stamp);saveSettings();draw()};
+const pr=el('div',{className:'fr'});pr.appendChild(el('label',{textContent:'印鑑2つ目'}));
+const pb=el('div',{className:'chips'});
+[['shocho','所長'],['eigyo','営業責任者']].forEach(([v,lb])=>{const c=el('button',{className:'chip',type:'button',textContent:lb});
+ c.classList.toggle('on',(V.stampPos||'shocho')===v);
+ c.onclick=()=>{V.stampPos=v;pb.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));saveSettings();draw()};
+ pb.appendChild(c)});
+pr.appendChild(pb);s.appendChild(pr);
 form.querySelectorAll('.chip').forEach(()=>{});
 /* 明細 */
 s=sec('明細（取引先・内容・金額）');
@@ -344,7 +351,7 @@ function draw(){
  wrap(V.sonota,100,736,438,9.5,12.5,3);
  if(V.stamp&&hanko.complete&&hanko.naturalWidth){
   ctx.drawImage(hanko,514.4*S,103.8*S,20.2*S,18.5*S);
-  ctx.drawImage(hanko,290.4*S,593*S,26.2*S,24*S)}
+  ctx.drawImage(hanko,(V.stampPos==='eigyo'?327.0:290.4)*S,593*S,26.2*S,24*S)}
 }
 hanko.onload=draw;
 /* ===== 出力 ===== */
@@ -372,7 +379,10 @@ $('#impFile').addEventListener('change',ev=>{
   CLIENTS=list;localStorage.setItem('kyosan_clients',JSON.stringify(list));
   if(d.hanko){localStorage.setItem('kyosan_hanko',d.hanko);hanko.src=d.hanko}
   impInfo();draw();
-  $('#msg').textContent='得意先リストを読み込みました（'+list.length+'件）';
+  if(d.settings){localStorage.setItem('kyosan_settings',JSON.stringify(d.settings));
+   $('#msg').textContent='読み込みました（'+list.length+'件）。所属・担当者・印鑑を登録して、再読み込みします';
+   setTimeout(()=>location.reload(),900);
+  }else $('#msg').textContent='得意先リストを読み込みました（'+list.length+'件）';
  }catch(e){$('#msg').textContent='読み込めませんでした：'+(e.message||e)}};
  r.readAsText(f);ev.target.value='';
 });
