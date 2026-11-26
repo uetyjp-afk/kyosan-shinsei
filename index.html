@@ -443,7 +443,7 @@ $('#sealFile').addEventListener('change',ev=>{
    const c2=document.createElement('canvas');c2.width=Math.max(1,Math.round(img.width*sc));c2.height=Math.max(1,Math.round(img.height*sc));
    const g=c2.getContext('2d');g.drawImage(img,0,0,c2.width,c2.height);
    const idd=g.getImageData(0,0,c2.width,c2.height),px=idd.data;
-   for(let i=0;i<px.length;i+=4)px[i+3]=255-px[i+1];
+   for(let i=0;i<px.length;i+=4)px[i+3]=Math.round(px[i+3]*(255-px[i+1])/255);
    g.putImageData(idd,0,0);
    const url=c2.toDataURL('image/png');
    localStorage.setItem('kyosan_hanko',url);hanko.onload=()=>draw();hanko.src=url;
