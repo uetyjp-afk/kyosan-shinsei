@@ -92,7 +92,7 @@ table.rows .amt{text-align:right}
   <div id="msg"></div>
   <p class="note">所属・担当者は端末に記憶されます。印鑑は、読み込んだデータか「印鑑を登録」で登録した画像を使います（不要なときは「基本」でオフ。2つ目の印鑑の位置は所長／営業責任者を選べます）。明細の取引先は「選ぶ」から得意先リストを検索できます（初回だけ、下のボタンからリストの読み込みが必要です。Excelでも読み込めます）。</p>
   <div class="imp"><button class="btn sub" id="impBtn" type="button">📋 得意先リスト読み込み</button><input type="file" id="impFile" accept=".json,.xlsx,.xls,application/json" style="display:none"><span class="imp-info" id="impInfo"></span></div>
-  <div class="imp"><button class="btn sub" id="dlBtn" type="button">📄 空のExcelをダウンロード</button><button class="btn sub" id="sealBtn" type="button">🖊 印鑑を登録</button><input type="file" id="sealFile" accept="image/*" style="display:none"><span class="imp-info" id="sealInfo"></span></div>
+  <div class="imp"><button class="btn sub" id="dlBtn" type="button">📄 空のExcelをダウンロード</button><button class="btn sub" id="sealBtn" type="button">🖊 印鑑を登録</button><input type="file" id="sealFile" style="display:none"><span class="imp-info" id="sealInfo"></span></div>
   <div class="guide" id="setupGuide" style="display:none"><b>はじめての方へ（最初の登録）</b><ol><li>下の「基本」で、所属と担当者を入力する</li><li>「🖊 印鑑を登録」から、印鑑の画像（写真でも可）を選ぶ</li><li>得意先リストを読み込む（「📄 空のExcelをダウンロード」で書式を取って入力するか、JSONファイル）</li></ol></div>
  </section>
  <section class="fm" id="form"></section>
