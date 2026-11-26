@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>協賛金申請書</title>
+<meta name="theme-color" content="#1f4e79">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgcng9IjMyIiBmaWxsPSIjMWY0ZTc5Ii8+PHRleHQgeD0iNjQiIHk9Ijg4IiBmb250LXNpemU9IjU4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5Y2UJjwvdGV4dD48L3N2Zz4=">
+<style>
+:root{--ac:#1f4e79;--ac2:#2e75b6;--line:#d7dee8;--bg:#f2f5f9;--card:#fff;--tx:#1d2733;--mut:#68788c;--bad:#c0392b}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--tx);font-size:15px}
+#splash{position:fixed;inset:0;background:#fff;z-index:99;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;color:var(--ac);transition:opacity .35s}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .lg{font-size:52px}
+#splash .tt{font-weight:700;font-size:19px;color:var(--tx)}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#16395c,var(--ac));color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px rgba(20,40,70,.25)}
+header .lg{font-size:26px;background:#fff;border-radius:9px;width:38px;height:38px;display:flex;align-items:center;justify-content:center}
+header h1{font-size:17px;margin:0}
+header .sub{font-size:11px;opacity:.85}
+main{max-width:1180px;margin:0 auto;padding:12px;display:block}
+@media(min-width:900px){main{display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:14px;align-items:start}.pv{position:sticky;top:70px}}
+.pv,.fm{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 1px 4px rgba(25,45,75,.06)}
+.pv h2,.fm h2{font-size:13px;margin:0 0 8px;color:var(--ac);letter-spacing:.06em}
+.cv{position:relative;width:100%;aspect-ratio:595/842;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.cv canvas{position:absolute;inset:0;width:100%;height:100%}
+.cv img.bg{position:absolute;inset:0;width:100%;height:100%}
+.sec{border-top:2px solid var(--ac);margin-top:14px;padding-top:8px}
+.sec:first-child{border-top:0;margin-top:0;padding-top:0}
+.sec>h3{font-size:13.5px;margin:0 0 8px;color:var(--ac)}
+.fr{display:flex;align-items:center;gap:8px;margin:7px 0}
+.fr label{flex:0 0 92px;font-size:13px;color:var(--mut)}
+.fr input[type=text],.fr input[type=number],.fr textarea{flex:1;min-width:0;border:1.6px solid var(--line);border-radius:9px;padding:9px 10px;font-size:15px;background:#fff;color:var(--tx)}
+.fr textarea{resize:vertical}
+.fr .unit{flex:0 0 auto;font-size:13px;color:var(--mut)}
+.fr3{display:flex;gap:6px;flex:1;align-items:center}
+.fr3 input{flex:1;min-width:0;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 2px}
+.chip{border:1.8px solid var(--ac2);color:var(--ac);background:#fff;border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;user-select:none}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.chip.sm{padding:5px 10px;font-size:13px}
+table.rows{width:100%;border-collapse:collapse}
+table.rows th{font-size:11.5px;color:var(--mut);font-weight:600;padding:2px 3px;text-align:left}
+table.rows td{padding:2.5px 3px}
+table.rows input{width:100%;border:1.4px solid var(--line);border-radius:7px;padding:7px 7px;font-size:14px}
+table.rows .amt{text-align:right}
+.pick{flex:0 0 auto;border:1.6px solid var(--ac2);background:#eaf2fa;color:var(--ac);border-radius:8px;padding:7px 9px;font-size:12.5px;cursor:pointer}
+.btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.btn{flex:1;min-width:130px;border:0;border-radius:11px;padding:13px 10px;font-size:15.5px;font-weight:700;cursor:pointer}
+.btn.main{background:var(--ac);color:#fff}
+.btn.sub{background:#e7edf4;color:var(--ac)}
+.btn.ghost{background:#fff;color:var(--mut);border:1.4px solid var(--line)}
+#msg{font-size:13.5px;color:var(--ac);margin-top:9px;min-height:19px}
+.note{font-size:12px;color:var(--mut);line-height:1.6;margin-top:6px}
+#picker{position:fixed;inset:0;background:rgba(15,30,50,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+#picker.open{display:flex}
+.pk{background:#fff;width:100%;max-width:560px;max-height:82vh;border-radius:16px 16px 0 0;display:flex;flex-direction:column;padding:14px}
+.pk h3{margin:0 0 8px;font-size:15px;color:var(--ac)}
+.pk input{border:1.8px solid var(--line);border-radius:10px;padding:11px;font-size:16px;width:100%}
+.pk .list{overflow:auto;margin-top:10px}
+.pk .item{padding:10px 8px;border-bottom:1px solid var(--line);cursor:pointer}
+.pk .item b{color:var(--ac);margin-right:8px}
+.pk .item small{display:block;color:var(--mut);margin-top:2px}
+.pk .x{align-self:flex-end;border:0;background:#e7edf4;border-radius:9px;padding:8px 14px;font-size:14px;cursor:pointer}
+.imp{margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.imp-info{font-size:12.5px;color:var(--mut)}
+@media print{
+ body{background:#fff}header,.fm,#splash,#picker{display:none!important}
+ main{display:block;padding:0;max-width:none}
+ .pv{border:0;box-shadow:none;padding:0}.pv h2,.pv .note{display:none}
+ .cv{border:0;border-radius:0}
+ @page{size:A4;margin:0}
+}
+</style>
+</head>
+<body>
+<div id="splash"><div class="lg">📄</div><div class="tt">協賛金申請書</div><div style="font-size:12px">読み込み中…</div></div>
+<header><div class="lg">📄</div><div><h1>協賛金申請書</h1><div class="sub">NJH-0017／入力してPDF作成・印刷</div></div></header>
+<main>
+ <section class="pv"><h2>プレビュー（A4）</h2>
+  <div class="cv"><img class="bg" src="./bg.jpg" alt=""><canvas id="cv" width="1785" height="2526"></canvas></div>
+  <div class="btns">
+   <button class="btn main" id="go">📄 PDFで保存</button>
+   <button class="btn sub" id="print">🖨 印刷</button>
+   <button class="btn ghost" id="clr">クリア</button>
+  </div>
+  <div id="msg"></div>
+  <p class="note">所属・担当者は端末に記憶されます。印鑑は元のExcel様式に入っていた上田印をそのまま使います（不要なときは「基本」でオフ）。明細の取引先は「選ぶ」から得意先リストを検索できます（初回だけ、下のボタンからリストの読み込みが必要です）。</p>
+  <div class="imp"><button class="btn sub" id="impBtn" type="button">📋 得意先リスト読み込み</button><input type="file" id="impFile" accept=".json,application/json" style="display:none"><span class="imp-info" id="impInfo"></span></div>
+ </section>
+ <section class="fm" id="form"></section>
+</main>
+<div id="picker"><div class="pk">
+ <h3>取引先を選ぶ</h3>
+ <input id="pkq" type="text" placeholder="コード・店名で検索">
+ <div class="list" id="pklist"></div>
+ <button class="x" id="pkx">閉じる</button>
+</div></div>
+<script src="./pdf-lib.min.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s),el=(t,a)=>{const e=document.createElement(t);if(a)for(const k in a)e[k]=a[k];return e};
+const W=595,H=842,S=3,cv=$('#cv'),ctx=cv.getContext('2d');
+let CLIENTS=[];
+try{CLIENTS=JSON.parse(localStorage.getItem('kyosan_clients')||'[]')}catch(e){CLIENTS=[]}
+const td=new Date();
+let V={};
+function defV(){
+ const set=JSON.parse(localStorage.getItem('kyosan_settings')||'{}');
+ const F={type:[],dY:String(td.getFullYear()),dM:String(td.getMonth()+1),dD:String(td.getDate()),
+ shozoku:set.shozoku||'広島',tanto:set.tanto||'上田　多加志',stamp:set.stamp!==false,
+ rows:[0,1,2,3,4].map(()=>({code:'',name:'',naiyou:'',amt:''})),denpyo:'',total:'',
+ tainou:'nashi',budget:'',ruikei:'',tenpu:[],hassou:'',shipM:'',shipD:'',okurijo:'',unsou:'',hatchu:'',
+ shiharai:'',genAmt:'',sosaiM:'',sosaiAmt:'',furiKijitsu:'',furiAmt:'',
+ urikake:'',uriY:'',uriM:'',site:'',genM:'',genD:'',kurikoshi:'',zengetsu:'',
+ rate1:'',rate2:'',perY1:'',perM1:'',perY2:'',perM2:'',
+ kakusho:'nashi',mokuhyo:'',jisseki2:'',bikou:'',
+ nY:'',nM:'',nD:'',okurisaki:'kijo',seisaku:[],shell:'',colorName:'',
+ tegusu:'',tegusuLen:'',vent:'',ventMm:'',vol:'',nidan:false,pb:'',sonota:''};
+ if(V.rows){V.rows.forEach((r,i)=>Object.assign(r,F.rows[i]));delete F.rows}
+ Object.assign(V,F);
+}
+defV();
+function saveSettings(){localStorage.setItem('kyosan_settings',JSON.stringify({shozoku:V.shozoku,tanto:V.tanto,stamp:V.stamp}))}
+const dig=s=>String(s==null?'':s).replace(/[^0-9]/g,'');
+const money=s=>{const d=dig(s);return d?Number(d).toLocaleString('ja-JP'):''};
+/* ===== 座標定義（単位pt・原点は左上） ===== */
+const CHK={ // チェック中心座標
+ type:{hanbai:[148.4,27.9],itaku:[204.9,27.9],kyosan:[265.1,28.1],campaign:[368,28.6],whanbai:[148.6,49.7],wkashi:[264.6,49.4],dhanbai:[148.8,73.3],dkyosan:[264.7,73.3]},
+ tainou:{ari:[115.3,288],nashi:[292.6,288.2]},
+ tenpu:{seikyu:[115.3,317.9],chirashi:[294.8,318.5]},
+ hassou:{tewatashi:[115.3,334.4],honsha:[115.3,349.8],shisha:[115.3,365.5],gaichu:[115.3,398]},
+ shiharai:{genkin:[115.3,412.6],sosai:[115.3,427.1],furikomi:[115.3,443.8]},
+ kakusho:{ari:[115.3,537.2],nashi:[115.2,554]},
+ okurisaki:{kijo:[340.5,662.1],hanten:[408.7,662.1],eigyosho:[477.8,662.1]},
+ seisaku:{stock:[105.3,678.2],impression:[167.6,678],henpin:[249.6,678],kenonki:[308,676.9]},
+ shell:{beige:[167.6,692.5],color:[249.6,693.6]},
+ tegusu:{wa:[105.3,709.2],ippon:[166.1,708.1],nashi:[332.7,708.1]},
+ vent:{ari:[105.3,724.5],nashi:[199,724.5]},
+ vol:{ari:[295.1,724.5],nashi:[332.7,724.5]},
+ nidan:[366.8,724.5],
+ pb:{ari:[479.1,724.5],nashi:[516.2,724.5]}};
+/* テキスト転記: [キー, x, baseline, align(l/r/c), fontSize, 最大幅, money?] */
+const TXT=[
+ ['dY',136,115.5,'r',10.5,34],['dM',189,115.5,'r',10.5,30],['dD',242,115.5,'r',10.5,30],
+ ['shozoku',358.5,115.5,'c',10.5,66],['tanto',441,115.5,'l',10.5,62],
+ ['budget',256,306,'r',10.5,78,1],['ruikei',430,306,'r',10.5,73,1],
+ ['shipM',188,384.5,'r',10,44],['shipD',237,384.5,'r',10,30],
+ ['okurijo',324,384.5,'l',9.5,104],['unsou',472,384.5,'l',9,68],
+ ['hatchu',324,400,'l',9.5,214],
+ ['genAmt',540,415.5,'r',10.5,160,1],['sosaiM',168,431.5,'c',9.5,17],
+ ['sosaiAmt',540,431.5,'r',10.5,160,1],
+ ['furiKijitsu',380,447,'l',9.5,88],['furiAmt',540,462.5,'r',10.5,156,1],
+ ['urikake',213,478,'r',10,58,1],['uriY',283,478,'r',10,20],['uriM',320,478,'r',10,18],
+ ['site',504,478,'r',10,19],
+ ['genM',136,494.5,'r',10,20],['genD',187,494.5,'r',10,30],
+ ['kurikoshi',356,494.5,'r',10,48,1],['zengetsu',504,494.5,'r',10,50,1],
+ ['rate1',200,510,'r',10,48],['rate2',320,510,'r',10,62],
+ ['perY1',187,525.5,'r',9.5,30],['perM1',237,525.5,'r',9.5,30],
+ ['perY2',307,525.5,'r',9.5,30],['perM2',356,525.5,'r',9.5,30],
+ ['mokuhyo',224,541.5,'l',9,46],['jisseki2',292,541.5,'l',9,50],
+ ['denpyo',436,244.5,'l',9.5,102],
+ ['nY',138,664.5,'r',10.5,32],['nM',189,664.5,'r',10.5,32],['nD',241,664.5,'r',10.5,32],
+ ['colorName',280,696,'l',9,150],['tegusuLen',283,711.5,'r',9.5,22],['ventMm',150,727.5,'r',9.5,20]];
+const ROWY=[166,182,198,213,228];
+/* ===== 入力UI ===== */
+const form=$('#form');
+function sec(title){const d=el('div',{className:'sec'});d.appendChild(el('h3',{textContent:title}));form.appendChild(d);return d}
+function chips(parent,group,opts,multi){
+ const box=el('div',{className:'chips'});
+ opts.forEach(([v,lb])=>{const c=el('button',{className:'chip',textContent:lb,type:'button'});
+  const on=()=>{const cur=V[group];const isOn=multi?cur.includes(v):cur===v;c.classList.toggle('on',isOn)};
+  c.onclick=()=>{if(multi){const a=V[group];const i=a.indexOf(v);if(i>=0)a.splice(i,1);else a.push(v)}else V[group]=V[group]===v?'':v;on();draw()};
+  c._sync=on;box.appendChild(c);on()});
+ parent.appendChild(box);return box}
+function row(parent,label,key,opts){
+ opts=opts||{};const d=el('div',{className:'fr'});d.appendChild(el('label',{textContent:label}));
+ const i=el('input',{type:opts.num?'text':'text',value:V[key]||'',placeholder:opts.ph||''});
+ if(opts.num)i.inputMode='numeric';
+ i.oninput=()=>{V[key]=i.value;if(key==='shozoku'||key==='tanto')saveSettings();draw()};
+ d.appendChild(i);if(opts.unit)d.appendChild(el('span',{className:'unit',textContent:opts.unit}));
+ parent.appendChild(d);return i}
+function row3(parent,label,keys,units){
+ const d=el('div',{className:'fr'});d.appendChild(el('label',{textContent:label}));
+ const b=el('div',{className:'fr3'});
+ keys.forEach((k,ix)=>{const i=el('input',{type:'text',value:V[k]||''});i.inputMode='numeric';
+  i.oninput=()=>{V[k]=i.value;draw()};b.appendChild(i);
+  b.appendChild(el('span',{className:'unit',textContent:units[ix]}))});
+ d.appendChild(b);parent.appendChild(d)}
+function tarea(parent,label,key,rows){
+ const d=el('div',{className:'fr'});d.appendChild(el('label',{textContent:label}));
+ const t=el('textarea',{value:V[key]||'',rows:rows||2});
+ t.oninput=()=>{V[key]=t.value;draw()};d.appendChild(t);parent.appendChild(d)}
+/* 種別 */
+let s=sec('種別（複数可）');
+chips(s,'type',[['hanbai','販売'],['itaku','委託'],['kyosan','協賛'],['campaign','キャンペーン品'],['whanbai','ワーキング販売'],['wkashi','ワーキング貸'],['dhanbai','ダミー販売'],['dkyosan','ダミー協賛']],true);
+/* 基本 */
+s=sec('基本');
+row3(s,'日付',['dY','dM','dD'],['年','月','日']);
+row(s,'所属','shozoku');row(s,'担当者','tanto');
+chips(s,'stamp',[['on','印鑑を押す（担当者・所長）']],false).querySelector('.chip').onclick=function(){
+ V.stamp=!V.stamp;this.classList.toggle('on',V.stamp);saveSettings();draw()};
+form.querySelectorAll('.chip').forEach(()=>{});
+/* 明細 */
+s=sec('明細（取引先・内容・金額）');
+const tbl=el('table',{className:'rows'});
+tbl.innerHTML='<tr><th style="width:15%">コード</th><th style="width:31%">取引先名</th><th>内容</th><th style="width:20%">金額</th><th></th></tr>';
+V.rows.forEach((r,ix)=>{
+ const tr=el('tr');
+ const mk=(k,cls)=>{const i=el('input',{type:'text',value:r[k]||'',className:cls||''});if(k==='amt')i.inputMode='numeric';
+  i.oninput=()=>{r[k]=i.value;if(k==='amt')syncTotal();draw()};return i};
+ const td1=el('td');td1.appendChild(mk('code'));
+ const td2=el('td');td2.appendChild(mk('name'));
+ const td3=el('td');td3.appendChild(mk('naiyou'));
+ const td4=el('td');td4.appendChild(mk('amt','amt'));
+ const td5=el('td');const pb=el('button',{className:'pick',textContent:'選ぶ',type:'button'});
+ pb.onclick=()=>openPicker(ix);td5.appendChild(pb);
+ [td1,td2,td3,td4,td5].forEach(t=>tr.appendChild(t));tbl.appendChild(tr)});
+s.appendChild(tbl);
+row(s,'一部売上 伝票№','denpyo');
+const totalInput=row(s,'合計金額（税込）','total',{num:true,unit:'円'});
+function syncTotal(){const sum=V.rows.reduce((a,r)=>a+(Number(dig(r.amt))||0),0);
+ V.total=sum?String(sum):'';totalInput.value=V.total}
+/* 滞納・協賛金枠 */
+s=sec('滞納・協賛金枠');
+chips(s,'tainou',[['ari','滞納あり'],['nashi','滞納なし']],false);
+row(s,'協賛金予算枠','budget',{num:true,unit:'円'});
+row(s,'累計実行金額','ruikei',{num:true,unit:'円'});
+/* 添付・発送 */
+s=sec('添付書類・発送方法');
+chips(s,'tenpu',[['seikyu','請求書'],['chirashi','チラシ（コピー）']],true);
+chips(s,'hassou',[['tewatashi','手渡し'],['honsha','本社から直送'],['shisha','支社・営業所から直送'],['gaichu','外注先より発送']],false);
+const shipD=el('div',{className:'fr'});shipD.appendChild(el('label',{textContent:'出荷日'}));
+const sb=el('div',{className:'fr3'});
+[['shipM','月'],['shipD','日']].forEach(([k,u])=>{const i=el('input',{type:'text',value:V[k]||''});i.inputMode='numeric';
+ i.oninput=()=>{V[k]=i.value;draw()};sb.appendChild(i);sb.appendChild(el('span',{className:'unit',textContent:u}))});
+shipD.appendChild(sb);s.appendChild(shipD);
+row(s,'送り状No','okurijo');row(s,'運送会社名','unsou');row(s,'発注先','hatchu');
+/* 支払 */
+s=sec('支払方法');
+chips(s,'shiharai',[['genkin','現金（送金）'],['sosai','相殺'],['furikomi','振込']],false);
+row(s,'現金の金額','genAmt',{num:true,unit:'円'});
+row(s,'相殺（○月締め）','sosaiM',{num:true,unit:'月'});
+row(s,'相殺の金額','sosaiAmt',{num:true,unit:'円'});
+row(s,'振込期日','furiKijitsu',{ph:'例：翌月末'});
+row(s,'振込金額','furiAmt',{num:true,unit:'円'});
+/* 実績 */
+s=sec('実績');
+row(s,'売掛残高','urikake',{num:true,unit:'円'});
+row3(s,'締め請求分',['uriY','uriM'],['年','月']);
+row(s,'支払サイト','site',{num:true,unit:'ヶ月'});
+row3(s,'現在',['genM','genD'],['月','日']);
+row(s,'繰越金額','kurikoshi',{num:true,unit:'円'});
+row(s,'前月売上額','zengetsu',{num:true,unit:'円'});
+const rd=el('div',{className:'fr'});rd.appendChild(el('label',{textContent:'実質掛率'}));
+const rb=el('div',{className:'fr3'});
+[['rate1',''],['rate2','%']].forEach(([k,u],ix)=>{if(ix===1)rb.appendChild(el('span',{className:'unit',textContent:'現在〜'}));
+ const i=el('input',{type:'text',value:V[k]||''});i.inputMode='decimal';
+ i.oninput=()=>{V[k]=i.value;draw()};rb.appendChild(i);
+ if(u)rb.appendChild(el('span',{className:'unit',textContent:u}))});
+rd.appendChild(rb);s.appendChild(rd);
+row3(s,'算出期間（自）',['perY1','perM1'],['年','月']);
+row3(s,'算出期間（至）',['perY2','perM2'],['年','月']);
+/* 覚書・備考 */
+s=sec('覚書・備考');
+chips(s,'kakusho',[['ari','覚書あり'],['nashi','覚書なし']],false);
+row(s,'協賛条件・目標','mokuhyo');row(s,'協賛条件・実績','jisseki2');
+tarea(s,'備考欄','bikou',3);
+/* ワーキング・ダミー */
+s=sec('ワーキング・ダミーの場合');
+row3(s,'希望納期',['nY','nM','nD'],['年','月','日']);
+chips(s,'okurisaki',[['kijo','営業机上'],['hanten','販売店'],['eigyosho','営業所経由']],false);
+chips(s,'seisaku',[['stock','ストックカナル'],['impression','インプレッション'],['henpin','返品分'],['kenonki','検音器']],true);
+chips(s,'shell',[['beige','ベージュ（通常）'],['color','カラー']],false);
+row(s,'カラー名','colorName');
+chips(s,'tegusu',[['wa','輪テグス'],['ippon','一本テグス'],['nashi','テグスなし']],false);
+row(s,'テグス長さ','tegusuLen',{num:true,unit:'mm'});
+chips(s,'vent',[['ari','ベントあり'],['nashi','ベントなし']],false);
+row(s,'ベント径','ventMm',{num:true,unit:'mm'});
+chips(s,'vol',[['ari','ボリュームあり'],['nashi','ボリュームなし']],false);
+chips(s,'nidan',[['on','二段ボリューム']],false).querySelector('.chip').onclick=function(){
+ V.nidan=!V.nidan;this.classList.toggle('on',V.nidan);draw()};
+chips(s,'pb',[['ari','PBメモリーあり'],['nashi','PBメモリーなし']],false);
+tarea(s,'その他要望事項','sonota',2);
+/* 印鑑チップの初期表示 */
+document.querySelectorAll('.chip').forEach(c=>{if(c.textContent.startsWith('印鑑'))c.classList.toggle('on',V.stamp);
+ if(c.textContent==='二段ボリューム')c.classList.toggle('on',V.nidan)});
+/* ===== 取引先ピッカー ===== */
+let pkRow=0;
+function openPicker(ix){pkRow=ix;$('#picker').classList.add('open');renderPk('');const q=$('#pkq');q.value='';setTimeout(()=>q.focus(),60)}
+function renderPk(q){
+ const list=$('#pklist');list.innerHTML='';
+ const hits=CLIENTS.filter(c=>!q||c.code.includes(q)||c.n1.includes(q)||c.n2.includes(q)).slice(0,60);
+ if(!CLIENTS.length){list.appendChild(el('div',{className:'item',textContent:'得意先リストが未読み込みです。いったん閉じて、プレビュー下の「📋 得意先リスト読み込み」から読み込んでください'}));return}
+ if(!hits.length){list.appendChild(el('div',{className:'item',textContent:'見つかりません'}));return}
+ hits.forEach(c=>{const d=el('div',{className:'item'});
+  const b=el('b',{textContent:c.code});d.appendChild(b);
+  d.appendChild(document.createTextNode(c.n1+(c.n2?' '+c.n2:'')));
+  d.appendChild(el('small',{textContent:(c.zip?'〒'+c.zip+' ':'')+c.addr+(c.tel?'　☎'+c.tel:'')}));
+  d.onclick=()=>{const r=V.rows[pkRow];r.code=c.code;r.name=(c.n1+' '+(c.n2||'')).trim();
+   document.querySelectorAll('table.rows tr')[pkRow+1].querySelectorAll('input').forEach((inp,j)=>{inp.value=[r.code,r.name,r.naiyou,r.amt][j]});
+   $('#picker').classList.remove('open');draw()};
+  list.appendChild(d)})}
+$('#pkq').oninput=e=>renderPk(e.target.value.trim());
+$('#pkx').onclick=()=>$('#picker').classList.remove('open');
+$('#picker').onclick=e=>{if(e.target.id==='picker')$('#picker').classList.remove('open')};
+/* ===== 描画 ===== */
+const hanko=new Image();
+try{const hs=localStorage.getItem('kyosan_hanko');if(hs)hanko.src=hs}catch(e){}
+function fit(t,x,y,a,fs,mw,bold){
+ t=String(t||'');if(!t)return;
+ ctx.fillStyle='#17233b';let f=fs;
+ ctx.font=(bold?'700 ':'')+f*S+'px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';
+ const wid=()=>ctx.measureText(t).width/S;
+ while(wid()>mw&&f>6){f-=0.5;ctx.font=(bold?'700 ':'')+f*S+'px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif'}
+ ctx.textAlign=a==='r'?'right':a==='c'?'center':'left';ctx.textBaseline='alphabetic';
+ ctx.fillText(t,x*S,y*S)}
+function chk(cx,cy){ctx.save();ctx.translate(cx*S,cy*S);ctx.strokeStyle='#1c4f9c';ctx.lineWidth=1.7*S;ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.beginPath();ctx.moveTo(-2.1*S,0.1*S);ctx.lineTo(-0.6*S,1.9*S);ctx.lineTo(2.4*S,-1.8*S);ctx.stroke();ctx.restore()}
+function mark(group,key){const p=CHK[group][key];if(p)chk(p[0],p[1])}
+function wrap(t,x,yTop,mw,fs,lh,maxLines){
+ ctx.fillStyle='#17233b';ctx.font=fs*S+'px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';
+ ctx.textAlign='left';ctx.textBaseline='alphabetic';
+ let line='',lines=[];
+ for(const ch of String(t||'')){if(ch==='\n'){lines.push(line);line='';continue}
+  if(ctx.measureText(line+ch).width/S>mw){lines.push(line);line=ch}else line+=ch}
+ if(line)lines.push(line);
+ lines.slice(0,maxLines).forEach((ln,i)=>ctx.fillText(ln,x*S,(yTop+fs+i*lh)*S))}
+function draw(){
+ ctx.clearRect(0,0,cv.width,cv.height);
+ TXT.forEach(([k,x,y,a,fs,mw,ism])=>fit(ism?money(V[k]):V[k],x,y,a,fs,mw));
+ V.rows.forEach((r,i)=>{const y=ROWY[i];
+  fit(r.code,54,y,'l',9,40);fit(r.name,100,y,'l',9.5,155);
+  fit(r.naiyou,261,y,'l',9.5,168);fit(money(r.amt),540,y,'r',10.5,100)});
+ fit(money(V.total),540,260.5,'r',11.5,110,true);
+ (V.type||[]).forEach(v=>mark('type',v));
+ ['tainou','hassou','shiharai','kakusho','okurisaki','shell','tegusu','vent','vol','pb'].forEach(g=>{if(V[g])mark(g,V[g])});
+ (V.tenpu||[]).forEach(v=>mark('tenpu',v));
+ (V.seisaku||[]).forEach(v=>mark('seisaku',v));
+ if(V.nidan)chk(CHK.nidan[0],CHK.nidan[1]);
+ wrap(V.bikou,100,577,97,8.5,11.5,4);
+ wrap(V.sonota,100,736,438,9.5,12.5,3);
+ if(V.stamp&&hanko.complete&&hanko.naturalWidth){
+  ctx.drawImage(hanko,514.4*S,103.8*S,20.2*S,18.5*S);
+  ctx.drawImage(hanko,290.4*S,593*S,26.2*S,24*S)}
+}
+hanko.onload=draw;
+/* ===== 出力 ===== */
+$('#go').onclick=async()=>{const m=$('#msg');m.textContent='作成中…';
+ try{if(!window.PDFLib)throw new Error('PDF部品を読み込めませんでした。通信状況を確認してください。');
+  draw();const png=await new Promise(r=>cv.toBlob(r,'image/png')),bin=new Uint8Array(await (await fetch('./form.pdf')).arrayBuffer());
+  const doc=await PDFLib.PDFDocument.load(bin),pg=doc.getPage(0),im=await doc.embedPng(new Uint8Array(await png.arrayBuffer())),sz=pg.getSize();
+  pg.drawImage(im,{x:0,y:0,width:sz.width,height:sz.height});const out=await doc.save(),
+  ymd=td.getFullYear()+('0'+(td.getMonth()+1)).slice(-2)+('0'+td.getDate()).slice(-2),name='協賛金申請書_'+ymd+'.pdf';
+  const a=el('a',{href:URL.createObjectURL(new Blob([out],{type:'application/pdf'})),download:name});
+  document.body.appendChild(a);a.click();a.remove();m.textContent='保存しました：'+name}
+ catch(e){m.textContent='保存できませんでした：'+(e.message||e)}};
+$('#print').onclick=()=>{draw();window.print()};
+$('#clr').onclick=()=>{if(!confirm('入力内容をクリアしますか？（所属・担当者は残ります）'))return;location.reload()};
+/* ===== 得意先リスト・印鑑の読み込み（端末内だけに保存） ===== */
+function impInfo(){const s=$('#impInfo');if(s)s.textContent=CLIENTS.length?('得意先リスト：'+CLIENTS.length+'件 読み込み済み'):'得意先リスト：未読み込み（初回は読み込んでください）'}
+$('#impBtn').onclick=()=>$('#impFile').click();
+$('#impFile').addEventListener('change',ev=>{
+ const f=ev.target.files[0];if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{try{
+  const d=JSON.parse(r.result);
+  const list=Array.isArray(d)?d:d.clients;
+  if(!Array.isArray(list)||!list.length)throw new Error('リストが入っていません');
+  CLIENTS=list;localStorage.setItem('kyosan_clients',JSON.stringify(list));
+  if(d.hanko){localStorage.setItem('kyosan_hanko',d.hanko);hanko.src=d.hanko}
+  impInfo();draw();
+  $('#msg').textContent='得意先リストを読み込みました（'+list.length+'件）';
+ }catch(e){$('#msg').textContent='読み込めませんでした：'+(e.message||e)}};
+ r.readAsText(f);ev.target.value='';
+});
+impInfo();
+document.querySelector('.cv img.bg').onload=draw;
+draw();
+window.__t={get V(){return V},draw,set:(k,v)=>{V[k]=v;draw()}};
+setTimeout(()=>$('#splash').classList.add('hide'),80);
+</script>
+<script>if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}</script>
+</body>
+</html>
