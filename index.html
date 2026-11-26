@@ -84,8 +84,10 @@ table.rows .amt{text-align:right}
 <main>
  <section class="pv"><h2>プレビュー（A4）</h2>
   <div class="cv"><img class="bg" src="./bg.jpg" alt=""><canvas id="cv" width="1785" height="2526"></canvas></div>
+  <div class="fr" style="margin-bottom:10px"><label>ファイル名</label><input type="text" id="fname"></div>
   <div class="btns">
    <button class="btn main" id="go">📄 PDFで保存</button>
+   <button class="btn sub" id="share">📤 共有で保存</button>
    <button class="btn sub" id="print">🖨 印刷</button>
    <button class="btn ghost" id="clr">クリア</button>
   </div>
@@ -361,15 +363,39 @@ function draw(){
 }
 hanko.onload=draw;
 /* ===== 出力 ===== */
+let hankoVer=0;
+const ymd8=td.getFullYear()+('0'+(td.getMonth()+1)).slice(-2)+('0'+td.getDate()).slice(-2);
+$('#fname').value='協賛金申請書_'+ymd8;
+function pdfName(){let n=($('#fname').value||'').trim().replace(/[\\/:*?"<>|]/g,'_');
+ if(!n)n='協賛金申請書_'+ymd8; if(!/\.pdf$/i.test(n))n+='.pdf'; return n}
+let pdfMemo={sig:'',bytes:null};
+function pdfSig(){return JSON.stringify(V)+'|'+hankoVer+'|'+(localStorage.getItem('kyosan_hanko')?'h':'')}
+async function makePdf(){
+ if(!window.PDFLib)throw new Error('PDF部品を読み込めませんでした。通信状況を確認してください。');
+ draw();const png=await new Promise(r=>cv.toBlob(r,'image/png')),bin=new Uint8Array(await (await fetch('./form.pdf')).arrayBuffer());
+ const doc=await PDFLib.PDFDocument.load(bin),pg=doc.getPage(0),im=await doc.embedPng(new Uint8Array(await png.arrayBuffer())),sz=pg.getSize();
+ pg.drawImage(im,{x:0,y:0,width:sz.width,height:sz.height});
+ return doc.save();
+}
+async function ensurePdf(){const sig=pdfSig();
+ if(pdfMemo.sig===sig&&pdfMemo.bytes)return pdfMemo.bytes;
+ const bytes=await makePdf();pdfMemo={sig,bytes};return bytes}
+function downloadPdf(bytes,name){const a=el('a',{href:URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),download:name});
+ document.body.appendChild(a);a.click();a.remove()}
 $('#go').onclick=async()=>{const m=$('#msg');m.textContent='作成中…';
- try{if(!window.PDFLib)throw new Error('PDF部品を読み込めませんでした。通信状況を確認してください。');
-  draw();const png=await new Promise(r=>cv.toBlob(r,'image/png')),bin=new Uint8Array(await (await fetch('./form.pdf')).arrayBuffer());
-  const doc=await PDFLib.PDFDocument.load(bin),pg=doc.getPage(0),im=await doc.embedPng(new Uint8Array(await png.arrayBuffer())),sz=pg.getSize();
-  pg.drawImage(im,{x:0,y:0,width:sz.width,height:sz.height});const out=await doc.save(),
-  ymd=td.getFullYear()+('0'+(td.getMonth()+1)).slice(-2)+('0'+td.getDate()).slice(-2),name='協賛金申請書_'+ymd+'.pdf';
-  const a=el('a',{href:URL.createObjectURL(new Blob([out],{type:'application/pdf'})),download:name});
-  document.body.appendChild(a);a.click();a.remove();m.textContent='保存しました：'+name}
+ try{const bytes=await ensurePdf(),name=pdfName();downloadPdf(bytes,name);m.textContent='保存しました：'+name}
  catch(e){m.textContent='保存できませんでした：'+(e.message||e)}};
+$('#share').onclick=async()=>{const m=$('#msg');const name=pdfName();
+ try{
+  if(!(navigator.canShare&&navigator.share))throw new Error('このブラウザでは共有保存が使えません。「PDFで保存」をお使いください');
+  m.textContent='作成中…';
+  const bytes=await ensurePdf();
+  const file=new File([bytes],name,{type:'application/pdf'});
+  if(!navigator.canShare({files:[file]}))throw new Error('このブラウザではファイルを共有できません。「PDFで保存」をお使いください');
+  await navigator.share({files:[file]});
+  m.textContent='共有しました：'+name;
+ }catch(e){if(e&&e.name==='AbortError')m.textContent='共有をキャンセルしました';
+  else m.textContent='共有できませんでした：'+(e.message||e)}};
 $('#print').onclick=()=>{draw();window.print()};
 $('#clr').onclick=()=>{if(!confirm('入力内容をクリアしますか？（所属・担当者は残ります）'))return;location.reload()};
 /* ===== 得意先リスト・印鑑の読み込み（端末内だけに保存） ===== */
@@ -389,7 +415,7 @@ function importJSON(f){
   const d=JSON.parse(r.result);
   const list=Array.isArray(d)?d:d.clients;
   if(!Array.isArray(list)||!list.length)throw new Error('リストが入っていません');
-  if(d.hanko){localStorage.setItem('kyosan_hanko',d.hanko);hanko.src=d.hanko;sealInfo()}
+  if(d.hanko){localStorage.setItem('kyosan_hanko',d.hanko);hankoVer++;hanko.src=d.hanko;sealInfo()}
   applyClients(list,d);
  }catch(e){$('#msg').textContent='読み込めませんでした：'+(e.message||e)}};
  r.readAsText(f);
@@ -446,7 +472,7 @@ $('#sealFile').addEventListener('change',ev=>{
    for(let i=0;i<px.length;i+=4)px[i+3]=Math.round(px[i+3]*(255-px[i+1])/255);
    g.putImageData(idd,0,0);
    const url=c2.toDataURL('image/png');
-   localStorage.setItem('kyosan_hanko',url);hanko.onload=()=>draw();hanko.src=url;
+   localStorage.setItem('kyosan_hanko',url);hankoVer++;hanko.onload=()=>draw();hanko.src=url;
    sealInfo();updSetup();draw();
    $('#msg').textContent='印鑑を登録しました';
   }catch(e){$('#msg').textContent='印鑑を登録できませんでした：'+(e.message||e)}};
